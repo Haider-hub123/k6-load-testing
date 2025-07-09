@@ -1,0 +1,26 @@
+name: K6 Load Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  k6_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install K6
+      run: |
+        sudo apt update
+        sudo apt install -y gnupg software-properties-common
+        sudo gpg --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
+        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt update
+        sudo apt install -y k6
+
+    - name: Run K6 Load Test
+      run: k6 run ./LoginTest.js --summary-export=results.json
