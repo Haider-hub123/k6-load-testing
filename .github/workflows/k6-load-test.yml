@@ -1,4 +1,4 @@
-name: K6 Load Test
+name: K6 Load Test with HTML Report
 
 on:
   push:
@@ -17,11 +17,16 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y gnupg software-properties-common
-        sudo gpg --keyserver keyserver.ubuntu.com --recv-keys 3D340B6C
+        sudo gpg --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
         echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
         sudo apt update
         sudo apt install -y k6
 
-    - name: Run K6 Load Test
-      run: |
-        k6 run ./LoginTest.js --summary-export=results.json
+    - name: Run K6 Test and generate HTML report
+      run: k6 run LoginTest.js
+
+    - name: Upload HTML report
+      uses: actions/upload-artifact@v3
+      with:
+        name: k6-html-report
+        path: summary.html
